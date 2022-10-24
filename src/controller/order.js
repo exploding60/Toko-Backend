@@ -1,6 +1,6 @@
 const ModelProduct = require("./../model/order")
 
-const productController = {
+const orderController = {
     update:(req, res, next) => {
         ModelProduct.updateData(req.params.id, req.body)
           .then((result) =>
@@ -47,4 +47,4 @@ const productController = {
     },
 }
 
-exports.productController = productController
+exports.orderController = orderController

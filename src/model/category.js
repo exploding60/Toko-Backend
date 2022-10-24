@@ -2,7 +2,7 @@ const pool = require('./../config/db');
 const Pool = require('./../config/db')
 
 const selectData = () => {
-    return Pool.query(`SELECT * FROM category`);
+    return Pool.query(`SELECT * FROM category ORDER BY id`);
 }
 
 const insertData = (data) => {

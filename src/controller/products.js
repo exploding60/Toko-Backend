@@ -22,7 +22,8 @@ const productController = {
       },
 
     getProduct: (req, res, next) => {
-        ModelProduct.selectData()
+      const page = req.query.page
+        ModelProduct.selectData(page)
           .then((result) => res.send({ result: result.rows }))
           .catch((err) => res.send({ message: "error", err }));
       },

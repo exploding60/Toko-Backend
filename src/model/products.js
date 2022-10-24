@@ -1,8 +1,8 @@
 const pool = require('./../config/db');
 const Pool = require('./../config/db')
 
-const selectData = () => {
-    return Pool.query(`SELECT * FROM products`);
+const selectData = (page) => {
+    return Pool.query(`SELECT * FROM products ORDER BY id limit 5 offset '${(page)}'`);
 }
 
 const insertData = (data) => {
@@ -24,7 +24,7 @@ const searchData = id =>{
       }
 
 const searchName = name =>{
-        return pool.query(`select * from products WHERE name ='${name}'`)
+        return pool.query(`SELECT id,name,stock,price,category_id,category_name FROM products WHERE name ILIKE '${name}%' ORDER BY id`)
       }
 
 const sortData = sort => {
