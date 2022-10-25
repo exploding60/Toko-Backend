@@ -1,4 +1,3 @@
-const pool = require('./../config/db');
 const Pool = require('./../config/db')
 
 const selectData = () => {
@@ -20,10 +19,10 @@ const deleteData = id => {
 }
 
 const searchData = id =>{
-        return pool.query(`select * from order_item WHERE id='${id}'`)
+        return Pool.query(`select * from order_item WHERE id='${id}'`)
       }
 
 const searchName = name =>{
-        return pool.query(`select * from order_item WHERE name ='${name}'`)
+        return Pool.query(`select * from order_item WHERE name ='${name}'`)
       }
 module.exports = {selectData, insertData,deleteData,updateData, searchData, searchName}

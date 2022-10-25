@@ -1,8 +1,7 @@
-const pool = require('./../config/db');
 const Pool = require('./../config/db')
 
-const selectData = () => {
-    return Pool.query(`SELECT * FROM category ORDER BY id`);
+const selectData = (page) => {
+    return Pool.query(`SELECT * FROM category ORDER BY id limit 5 offset '${(page - 1) * 5}'`);
 }
 
 const insertData = (data) => {
@@ -20,10 +19,13 @@ const deleteData = id => {
 }
 
 const searchData = id =>{
-        return pool.query(`Select * from category WHERE id='${id}'`)
+        return Pool.query(`Select * from category WHERE id='${id}'`)
       }
 
 const searchName = name =>{
-        return pool.query(`Select * from category WHERE category_name='${name}'`)
+        return Pool.query(`SELECT id,category_name FROM category WHERE category_name ILIKE '${name}%' ORDER BY id`)
       }
+// const searchName = name =>{
+//         return pool.query(`Select * from category WHERE category_name='${name}'`)
+//       }
 module.exports = {selectData, insertData,deleteData,updateData, searchData, searchName}

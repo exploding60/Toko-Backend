@@ -22,7 +22,8 @@ const categoryController = {
       },
 
     getCategory: (req, res, next) => {
-        ModelCategory.selectData()
+      const page = req.query.page
+      ModelCategory.selectData(page)
           .then((result) => res.send({ result: result.rows }))
           .catch((err) => res.send({ message: "error", err }));
       },

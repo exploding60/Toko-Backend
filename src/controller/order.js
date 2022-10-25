@@ -12,7 +12,6 @@ const orderController = {
           )
           .catch((err) => res.send({ message: "error", err }));
       },
-      
     delete: (req, res, next) => {
         ModelProduct.deleteData(req.params.id)
           .then((result) =>
