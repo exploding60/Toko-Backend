@@ -1,5 +1,5 @@
 const ModelProduct = require("./../model/products")
-
+const {response} = require("./../middleware/getDataHelpers")
 const productController = {
     update:(req, res, next) => {
         ModelProduct.updateData(req.params.id, req.body)
@@ -25,26 +25,22 @@ const productController = {
       },
     delete: (req, res, next) => {
         ModelProduct.deleteData(req.params.id)
-          .then((result) =>
-            res.send({ status: 200, message: `berhasil menghapus data` })
-          )
-          .catch((err) => res.send({ message: "error", err }));
+        .then((result) => response(res,200,result.rows,"delete data success"))
+        .catch((err) => response(res,404,false,"get data faill"));
       },
-
-    // getProduct: (req, res, next) => {
-    //     const sort = req.query.sort;
-    //     const sortby = req.query.sortby;
-    //     const page = req.query.page;
-    //     const limit = req.query.limit;
-    //     ModelProduct.selectData(sortby, sort, page, limit)
-    //       .then((result) => res.send({ result: result.rows }))
-    //       .catch((err) => res.send({ message: "error", err }));
-    //   },
-      getProduct: (req, res, next) => {
+    sorting: (req, res, next) => {
+        const sort = req.query.sort;
+        const sortby = req.query.sortby;
         const page = req.query.page;
-        ModelProduct.selectData(page)
-          .then((result) => res.send({ result: result.rows }))
-          .catch((err) => res.send({ message: "error", err }));
+        const limit = req.query.limit;
+        ModelProduct.sort(sortby, sort, page, limit)
+          .then((result) => response(res,200,result.rows,"get data success"))
+          .catch((err) => response(res,404,false,"get data faill"));
+      },
+      getProduct: (req, res, next) => {
+        ModelProduct.selectData()
+        .then((result) => response(res,200,result.rows,"get data success"))
+        .catch((err) => response(res,404,false,"get data faill"));
       },
      insert: (req, res, next) => {
         ModelProduct.insertData(req.body)

@@ -1,11 +1,14 @@
 const Pool = require('./../config/db')
 
 // const selectData = (sortby, sort, page, limit) => {
-const selectData = (page) => {
-    return Pool.query(`SELECT * FROM products ORDER BY id limit 5 offset ${(page - 1) * 5}`);
-    // return Pool.query(`SELECT * FROM products ORDER BY '${sortby}' '${sort}' limit ${limit} offset ${(page - 1) * limit}`);
+const sort = (sortby, sort, page, limit) => {
+    // return Pool.query(`SELECT * FROM products ORDER BY id limit 5 offset ${(page - 1) * 5}`);
+    return Pool.query(`SELECT * FROM products ORDER BY ${sortby} ${sort} limit ${limit} offset ${page - 1}`);
 }
 
+const selectData = () =>{
+    return Pool.query(`SELECT name,stock,price,category.category_name as category FROM products INNER JOIN category on products.category_id = category.id`)
+}
 const insertData = (data) => {
     const {name,stock,price,category_id,category_name} = data;
     return Pool.query(`INSERT INTO products(name,stock,price,category_id,category_name) VALUES('${name}',${stock},${price},${category_id},'${category_name}')`);
@@ -32,8 +35,8 @@ const searchName = name =>{
 //     return Pool.query(`select * from products ORDER BY price DESC `)
 // }
 
-const sort = (sortby, sort, page, limit) => {
-    return Pool.query(`SELECT * FROM products ORDER BY ${sortby} ${sort} LIMIT ${limit} OFFSET ${(page - 1) * limit} `);
-}
+// const sort = (sortby, sort, page, limit) => {
+//     return Pool.query(`SELECT * FROM products ORDER BY ${sortby} ${sort} LIMIT ${limit} OFFSET ${(page - 1) * limit} `);
+// }
 
-module.exports = {selectData, insertData,deleteData ,updateData, searchData, searchName, sort}
+module.exports = {selectData, insertData,deleteData ,updateData, searchData, searchName,sort}

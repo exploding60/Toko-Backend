@@ -1,7 +1,7 @@
 const Pool = require('./../config/db')
 
 const selectData = () => {
-    return Pool.query(`SELECT * FROM order_item ORDER BY id`);
+    return Pool.query(`select amount,price,products.name as products FROM order_item INNER JOIN products on order_item.id_item = products.id`); //bisa tapi harus ubah DB dulu kemungkinan pricenya ngikut references dari table products
 }
 
 const insertData = (data) => {
