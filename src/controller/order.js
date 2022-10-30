@@ -27,7 +27,7 @@ const orderController = {
       },
 
      insert: (req, res, next) => {
-        ModelProduct.insertData(req.body)
+      ModelProduct.insertData(req.body)
           .then((result) =>
             res.send({ status: 200, message: `berhasil memasukan data` })
           )

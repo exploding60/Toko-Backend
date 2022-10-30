@@ -1,23 +1,32 @@
-const express = require('express');
-const exphbs = require('express-handlebars');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
+const express = require("express");
+const bodyParser = require("body-parser");
+const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+require("dotenv").config();
+const mainRouter = require('./src/routes/index')
+const { response } = require("./src/middleware/getDataHelpers");
 const app = express();
+const xss = require('xss-clean')
 
-// To support URL-encoded bodies
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// To parse cookies from the HTTP Request
+app.use(xss())
+app.use(morgan("dev"));
+app.use(cors());
 app.use(cookieParser());
-app.get('/', function (req, res) {
-    res.render('home');
+const port = process.env.PORT;
+app.use(bodyParser.json());
+
+app.use("/", mainRouter)
+app.use("/img", express.static('./upload'))
+
+app.all("*",(req,res,next)=> {
+  response(res,404,false,null,"404 Not Found")
+})
+
+app.get("/", (req, res, next) => {
+  res.status(200).json({ status: "success", statusCode: 200 });
 });
-app.engine('hbs', exphbs.engine({
-    extname: '.hbs'
-}));
 
-app.set('view engine', 'hbs');
-
-// Our requests hadlers will be implemented here...
-
-app.listen(3000);
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});

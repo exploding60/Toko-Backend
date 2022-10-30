@@ -10,8 +10,9 @@ const selectData = () =>{
     return Pool.query(`SELECT name,stock,price,category.category_name as category FROM products INNER JOIN category on products.category_id = category.id`)
 }
 const insertData = (data) => {
-    const {name,stock,price,category_id,category_name} = data;
-    return Pool.query(`INSERT INTO products(name,stock,price,category_id,category_name) VALUES('${name}',${stock},${price},${category_id},'${category_name}')`);
+    const {name,stock,price,category_id,photo} = data;
+    console.log('data',data)
+    return Pool.query(`INSERT INTO products(name,stock,price,category_id,photo) VALUES('${name}',${stock},${price},${category_id},'${photo}')`);
 }
 
 const updateData = (id,data) => {

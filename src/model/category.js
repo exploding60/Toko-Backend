@@ -1,7 +1,7 @@
 const Pool = require('./../config/db')
 
-const selectData = (page) => {
-    return Pool.query(`SELECT * FROM category ORDER BY id limit 5 offset '${(page - 1) * 5}'`);
+const selectData = () => {
+    return Pool.query(`SELECT * FROM category ORDER BY id`);
 }
 
 const insertData = (data) => {

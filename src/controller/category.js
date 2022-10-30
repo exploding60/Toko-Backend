@@ -29,6 +29,12 @@ const categoryController = {
       },
 
      insert: (req, res, next) => {
+        const Port = process.env.PORT
+        const photo = req.file.filename
+        const url = `http://localhost:${Port}/image/${photo}`
+        req.body.photo = url
+        req.body.stock = parseInt(req.body.stock)
+        req.body.price = parseInt(req.body.price)  
         ModelCategory.insertData(req.body)
           .then((result) =>
             res.send({ status: 200, message: `berhasil memasukan data` })

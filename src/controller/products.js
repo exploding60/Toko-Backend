@@ -1,5 +1,7 @@
+require("dotenv").config();
 const ModelProduct = require("./../model/products")
 const {response} = require("./../middleware/getDataHelpers")
+
 const productController = {
     update:(req, res, next) => {
         ModelProduct.updateData(req.params.id, req.body)
@@ -43,9 +45,15 @@ const productController = {
         .catch((err) => response(res,404,false,"get data faill"));
       },
      insert: (req, res, next) => {
+        const Port = process.env.PORT
+        const photo = req.file.filename
+        const url = `http://localhost:${Port}/image/${photo}`
+        req.body.photo = url
+        req.body.stock = parseInt(req.body.stock)
+        req.body.price = parseInt(req.body.price)
         ModelProduct.insertData(req.body)
           .then((result) =>
-            res.send({ status: 200, message: `berhasil memasukan data` })
+            res.send({ status: 200, message: `berhasil memasukan data progress` })
           )
           .catch((err) => res.send({ message: "error", err }));
       },
