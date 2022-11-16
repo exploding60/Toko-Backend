@@ -2,10 +2,10 @@ const { verify } = require("jsonwebtoken");
 const Pool = require("./../config/db");
 
 const create = (data) => {
-  const { id, email, password, fullname, role } = data;
+  const { id, email, password, fullname, role, otp } = data;
   return new Promise((resolve, reject) =>
     Pool.query(
-      `INSERT INTO users(id,email,password,fullname,role) VALUES('${id}','${email}','${password}','${fullname}','${role}')`,
+      `INSERT INTO users(id,email,password,fullname,role,verif,otp) VALUES('${id}','${email}','${password}','${fullname}','${role}',0,'${otp}')`,
       (err, result) => {
         if (!err) {
           resolve(result);
@@ -29,10 +29,24 @@ const findEmail = (email) => {
   );
 };
 
-const checkVerification = (verification) => {
+// const checkVerification = (verification) => {
+//   return new Promise((resolve, reject) =>
+//     Pool.query(
+//       `SELECT * FROM users where verif='${verification}'`,
+//       (err, result) => {
+//         if (!err) {
+//           resolve(result);
+//         } else {
+//           reject(err);
+//         }
+//       }
+//     )
+//   );
+// };
+const verification = (email) => {
   return new Promise((resolve, reject) =>
     Pool.query(
-      `SELECT * FROM users where verif='${verification}'`,
+      `UPDATE users SET verif=1 WHERE "email"='${email}'`,
       (err, result) => {
         if (!err) {
           resolve(result);
@@ -43,4 +57,4 @@ const checkVerification = (verification) => {
     )
   );
 };
-module.exports = { create, findEmail, checkVerification };
+module.exports = { create, findEmail, verification };

@@ -12,7 +12,7 @@ const sort = (sortby, sort, page, limit) => {
 
 const selectData = () => {
   return Pool.query(
-    `SELECT name,stock,price,category.category_name as category FROM products INNER JOIN category on products.category_id = category.id`
+    `SELECT products.id,name,stock,price,photo,category.category_name as category FROM products INNER JOIN category on products.category_id = category.id`
   );
 };
 const insertData = (data) => {
@@ -24,9 +24,9 @@ const insertData = (data) => {
 };
 
 const updateData = (id, data) => {
-  const { name, stock, price, category_id, category_name } = data;
+  const { name, stock, price, category_id, photo } = data;
   return Pool.query(
-    `UPDATE products SET name='${name}',stock='${stock}',price='${price}', category_id='${category_id}', category_name='${category_name}' WHERE id='${id}'`
+    `UPDATE products SET name='${name}',stock='${stock}',price='${price}', category_id='${category_id}',photo='${photo}' WHERE id='${id}'`
   );
 };
 

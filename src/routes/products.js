@@ -4,20 +4,25 @@ const { productController } = require("./../controller/products");
 const { validateStock } = require("./../helpers/validateStock");
 const { protect, requireAdmin, roleUser } = require("../middleware/auth");
 const upload = require("./../middleware/upload");
+const { hitCache, clearCache } = require("../middleware/redis");
 
-router.get("/sorting",productController.sorting);
+router.get("/:id", productController.search);
+router.get("/sorting", productController.sorting);
 router.get("/", productController.getProduct);
 router.post(
   "/",
-  roleUser,
   upload.single("photo"),
   validateStock,
   productController.insert
 );
-router.put("/:id", roleUser, validateStock, productController.update);
-router.delete("/:id", roleUser, productController.delete);
-router.get("/searchID=:id", productController.search);
-router.get("/search=:name", productController.searchName);
+router.put(
+  "/edit/:id",
+  // validateStock, masih error di validestock
+  upload.single("photo"),
+  productController.update
+);
+router.delete("/:id", productController.delete);
+// router.get("/search=:name", productController.searchName);
 // router.get('/',productController.sort)
 
 module.exports = router;

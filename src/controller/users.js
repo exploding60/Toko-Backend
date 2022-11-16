@@ -1,22 +1,13 @@
 const { response } = require("../middleware/getDataHelpers");
-const { create, findEmail, checkVerification } = require("../model/users");
+const { create, findEmail, verification } = require("../model/users");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 const { generateToken } = require("../helpers/auth");
-require("dotenv").config();
-const nodemailer = require("nodemailer");
+const email = require("../middleware/email");
 
-let transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    type: "OAuth2",
-    user: process.env.MAIL_USERNAME,
-    pass: process.env.MAIL_PASSWORD,
-    clientId: process.env.OAUTH_CLIENTID,
-    clientSecret: process.env.OAUTH_CLIENT_SECRET,
-    refreshToken: process.env.OAUTH_REFRESH_TOKEN,
-  },
-});
+const Port = process.env.PORT;
+const Host = process.env.HOST;
+
 const UsersController = {
   insert: async (req, res, next) => {
     let {
@@ -29,6 +20,14 @@ const UsersController = {
       return response(res, 404, false, "email already use", " register fail");
     }
 
+    // create otp
+    let digits = "0123456789";
+    let otp = "";
+    for (let i = 0; i < 6; i++) {
+      otp += digits[Math.floor(Math.random() * 10)];
+    }
+
+    let salt = bcrypt.genSaltSync(10);
     let password = bcrypt.hashSync(req.body.password);
     let data = {
       id: uuidv4(),
@@ -36,36 +35,27 @@ const UsersController = {
       password,
       fullname: req.body.fullname,
       role: req.body.role,
+      otp,
     };
     try {
       const result = await create(data);
       if (result) {
-        let payload = {
-          email: data.email,
-          role: data.role,
-        };
-        console.log(payload, "payload");
-        let token = generateToken(payload);
-        let mailOptions = {
-          from: "rizkyganteng",
-          to: data.email,
-          subject: "Nodemailer Project",
-          text: `"Hi! This is your token <b>'${token}'</b>"`,
-        };
-        transporter.sendMail(mailOptions, function (err, data) {
-          if (err) {
-            console.log("Error " + err);
-          } else {
-            console.log("Email Sent");n
-          }
-        });
         console.log(result);
+        let sendEmail = await email(
+          data.email,
+          otp,
+          `https://${Host}:${Port}/${email}/${otp}`,
+          data.fullname
+        );
+        if (sendEmail == "email not sent!") {
+          return response(res, 404, false, null, "register fail");
+        }
         response(
           res,
           200,
           true,
-          true,
-          "register success - check email to get token"
+          { email: data.email },
+          "register success please check your email"
         );
       }
     } catch (err) {
@@ -82,18 +72,54 @@ const UsersController = {
     if (!users) {
       return response(res, 404, false, null, " email not found");
     }
+    if (users.verif == 0) {
+      return response(res, 404, false, null, " email not verified");
+    }
     const password = req.body.password;
     const validation = bcrypt.compareSync(password, users.password);
     if (!validation) {
       return response(res, 404, false, null, "wrong password");
     }
     delete users.password;
+    delete users.otp;
+    delete users.verif;
     let payload = {
       email: users.email,
       role: users.role,
     };
     users.token = generateToken(payload);
     response(res, 200, false, users, "login success");
+  },
+  email: async (req, res, next) => {
+    let sendEmail = await email(
+      req.params.email,
+      "Kode OTP Food",
+      "https://localhost:3000/products"
+    );
+    if (sendEmail) {
+      response(res, 200, true, null, "send email success");
+    }
+  },
+  otp: async (req, res, next) => {
+    console.log("email", req.body.email);
+    console.log("password", req.body.otp);
+    let {
+      rows: [users],
+    } = await findEmail(req.body.email);
+    if (!users) {
+      return response(res, 404, false, null, " email not found");
+    }
+    if (users.otp == req.body.otp) {
+      const result = await verification(req.body.email);
+      return response(res, 200, true, result, " verification email success");
+    }
+    return response(
+      res,
+      404,
+      false,
+      null,
+      " wrong otp please check your email"
+    );
   },
 };
 
