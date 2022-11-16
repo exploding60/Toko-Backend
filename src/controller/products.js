@@ -20,11 +20,12 @@ const productController = {
       .catch((err) => res.send({ message: "error", err }));
   },
   sort: (req, res, next) => {
-    const sort = req.query.sort;
-    const sortby = req.query.sortby || "price";
+    const sort = req.query.sort || "desc";
+    const sortby = req.query.sortby || "";
     const page = req.query.page || 1;
     const limit = req.query.limit || 5;
-    ModelProduct.sort(sortby, sort, page, limit)
+    const search = req.query.search || "";
+    ModelProduct.sort(sortby, sort, page, limit, search)
       .then((result) => res.send({ result: result.rows }))
       .catch((err) => res.send({ message: `error`, err }));
   },

@@ -6,9 +6,8 @@ const { protect, requireAdmin, roleUser } = require("../middleware/auth");
 const upload = require("./../middleware/upload");
 const { hitCache, clearCache } = require("../middleware/redis");
 
-router.get("/:id", productController.search);
-router.get("/sorting", productController.sorting);
-router.get("/", productController.getProduct);
+router.get("/sort", productController.sort);
+// router.get("/", productController.getProduct);
 router.post(
   "/",
   upload.single("photo"),
@@ -24,5 +23,5 @@ router.put(
 router.delete("/:id", productController.delete);
 // router.get("/search=:name", productController.searchName);
 // router.get('/',productController.sort)
-
+router.get("/", productController.getProduct);
 module.exports = router;
