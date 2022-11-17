@@ -23,5 +23,5 @@ router.put(
 router.delete("/:id", productController.delete);
 // router.get("/search=:name", productController.searchName);
 // router.get('/',productController.sort)
-router.get("/", productController.getProduct);
+router.get("/:id", productController.search);
 module.exports = router;

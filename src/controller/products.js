@@ -19,15 +19,26 @@ const productController = {
       )
       .catch((err) => res.send({ message: "error", err }));
   },
-  sort: (req, res, next) => {
-    const sort = req.query.sort || "desc";
-    const sortby = req.query.sortby || "";
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 5;
-    const search = req.query.search || "";
-    ModelProduct.sort(sortby, sort, page, limit, search)
-      .then((result) => res.send({ result: result.rows }))
-      .catch((err) => res.send({ message: `error`, err }));
+  sort: async (req, res, next) => {
+    try {
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const offset = (page - 1) * limit;
+      const sortby = req.query.sortby || "name";
+      const sort = req.query.sort || "ASC";
+      const search = req.query.search || "";
+      const result = await ModelProduct.sort({
+        limit,
+        offset,
+        sort,
+        sortby,
+        search,
+      });
+      response(res, 200, true, result.rows, "get data success");
+    } catch (err) {
+      console.log(err);
+      response(res, 404, false, err, "get data fail");
+    }
   },
   delete: (req, res, next) => {
     ModelProduct.deleteData(req.params.id)
